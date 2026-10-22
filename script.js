@@ -1,36 +1,31 @@
 /**
- * FARMAN & ASMA ROYAL WEDDING INVITATION — LOGIC & INTERACTIONS
+ * FARMAN & ASMA — ROYAL SHAHI FARMAN (HAUTE COUTURE SUITE)
+ * Interactions, 3D Wax Seal Opening, ScrollSpy, Audio Engine, Petals
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   // Elements
-  const envelopeWrapper = document.getElementById('envelope-wrapper');
-  const envelope3D = document.getElementById('envelope-3d');
+  const stageGate = document.getElementById('stage-gate');
+  const envelopePod = document.getElementById('envelope-pod');
   const waxSeal = document.getElementById('wax-seal');
-  const cardSuite = document.getElementById('card-suite');
-  const pagesTrack = document.getElementById('pages-track');
-  const pages = document.querySelectorAll('.invitation-page');
-  const tabBtns = document.querySelectorAll('.tab-btn');
-  const navPrevBtn = document.getElementById('nav-prev-btn');
-  const navNextBtn = document.getElementById('nav-next-btn');
-  const musicToggle = document.getElementById('music-toggle');
-  const musicStatusText = document.getElementById('music-status-text');
-  const weddingAudio = document.getElementById('wedding-audio');
-  const copyAddressBtn = document.getElementById('copy-address-btn');
-  const copyText = document.getElementById('copy-text');
-  const shareBtn = document.getElementById('share-btn');
-  const calendarBtn = document.getElementById('calendar-btn');
-  const blessingShowerBtn = document.getElementById('blessing-shower-btn');
-  const restartTourBtn = document.getElementById('restart-tour-btn');
-  const toastPopup = document.getElementById('toast-popup');
+  const royalSuite = document.getElementById('royal-suite');
+  const audioDock = document.getElementById('audio-dock');
+  const audioDiscBtn = document.getElementById('audio-disc-btn');
+  const discVinyl = document.getElementById('disc-vinyl');
+  const audioStateTag = document.getElementById('audio-state-tag');
+  const weddingAudio = document.getElementById('wedding-instrumental');
+  const copyAddressAction = document.getElementById('copy-address-action');
+  const copyStatusText = document.getElementById('copy-status-text');
+  const addCalendarBtn = document.getElementById('add-calendar-btn');
+  const showerPetalsAction = document.getElementById('shower-petals-action');
+  const royalToast = document.getElementById('royal-toast');
+  const navChips = document.querySelectorAll('.nav-chip');
 
-  let currentPageIndex = 0;
-  const totalPages = pages.length;
   let isEnvelopeOpened = false;
-  let isMusicPlaying = false;
+  let isPlayingMusic = false;
   let audioContext = null;
   let synthGainNode = null;
-  let synthOscillators = [];
+  let synthOscs = [];
 
   /* ==========================================================================
      1. AMBIENT GOLD DUST CANVAS PARTICLES
@@ -38,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('ambient-canvas');
   const ctx = canvas.getContext('2d');
   let particles = [];
-  const particleCount = 45;
+  const particleCount = 40;
 
   function resizeCanvas() {
     canvas.width = window.innerWidth;
@@ -55,17 +50,15 @@ document.addEventListener('DOMContentLoaded', () => {
       this.x = Math.random() * canvas.width;
       this.y = Math.random() * canvas.height;
       this.size = Math.random() * 2.2 + 0.6;
-      this.speedY = -(Math.random() * 0.45 + 0.15);
-      this.speedX = (Math.random() - 0.5) * 0.3;
-      this.opacity = Math.random() * 0.6 + 0.2;
-      this.fadeSpeed = Math.random() * 0.008 + 0.003;
+      this.speedY = -(Math.random() * 0.35 + 0.12);
+      this.speedX = (Math.random() - 0.5) * 0.25;
+      this.opacity = Math.random() * 0.6 + 0.15;
       this.sway = Math.random() * Math.PI * 2;
     }
     update() {
       this.y += this.speedY;
-      this.sway += 0.02;
+      this.sway += 0.015;
       this.x += Math.sin(this.sway) * 0.3 + this.speedX;
-      this.opacity += Math.sin(this.sway * 2) * 0.005;
 
       if (this.y < -10 || this.x < -10 || this.x > canvas.width + 10) {
         this.y = canvas.height + 10;
@@ -76,8 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.save();
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(243, 229, 171, ${Math.max(0.1, Math.min(1, this.opacity))})`;
-      ctx.shadowBlur = 8;
+      ctx.fillStyle = `rgba(255, 230, 138, ${this.opacity})`;
+      ctx.shadowBlur = 6;
       ctx.shadowColor = 'rgba(255, 215, 0, 0.7)';
       ctx.fill();
       ctx.restore();
@@ -88,263 +81,183 @@ document.addEventListener('DOMContentLoaded', () => {
     particles.push(new GoldParticle());
   }
 
-  function animateParticles() {
+  function renderParticles() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     particles.forEach(p => {
       p.update();
       p.draw();
     });
-    requestAnimationFrame(animateParticles);
+    requestAnimationFrame(renderParticles);
   }
-  animateParticles();
+  renderParticles();
 
   /* ==========================================================================
-     2. AUDIO SYSTEM (Rich Audio Element + Harmonious Ambient Synthesizer Fallback)
+     2. TRADITIONAL WEDDING MUSIC & WEB AUDIO HARMONY ENGINE
      ========================================================================== */
-  function startSynthesizerDrone() {
+  function startWebAudioDrone() {
     try {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       if (!AudioCtx) return;
-      if (!audioContext) {
-        audioContext = new AudioCtx();
-      }
-      if (audioContext.state === 'suspended') {
-        audioContext.resume();
-      }
+      if (!audioContext) audioContext = new AudioCtx();
+      if (audioContext.state === 'suspended') audioContext.resume();
 
-      if (synthOscillators.length > 0) return; // Already running
+      if (synthOscs.length > 0) return;
 
       synthGainNode = audioContext.createGain();
       synthGainNode.gain.setValueAtTime(0.01, audioContext.currentTime);
       synthGainNode.gain.exponentialRampToValueAtTime(0.08, audioContext.currentTime + 3);
       synthGainNode.connect(audioContext.destination);
 
-      // Traditional Indian Wedding Harmony Frequencies (Tanpura D# / Sa-Pa drone)
-      const freqs = [155.56, 233.08, 311.13, 466.16];
-      freqs.forEach(freq => {
+      // Acoustic Tanpura & Sitar chord tones (Sa-Pa drone in C# / D)
+      const droneNotes = [138.59, 207.65, 277.18, 415.30];
+      droneNotes.forEach(freq => {
         const osc = audioContext.createOscillator();
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(freq, audioContext.currentTime);
-        
-        // Gentle vibrato
-        const lfo = audioContext.createOscillator();
-        const lfoGain = audioContext.createGain();
-        lfo.frequency.value = 0.2;
-        lfoGain.gain.value = 1.2;
-        lfo.connect(osc.frequency);
-        lfo.start();
+
+        const vibrato = audioContext.createOscillator();
+        const vibratoGain = audioContext.createGain();
+        vibrato.frequency.value = 0.25;
+        vibratoGain.gain.value = 1.2;
+        vibrato.connect(osc.frequency);
+        vibrato.start();
 
         osc.connect(synthGainNode);
         osc.start();
-        synthOscillators.push(osc);
+        synthOscs.push(osc);
       });
     } catch (e) {
-      console.warn('Audio synthesis note:', e);
+      console.warn('Audio synthesis fallback notice:', e);
     }
   }
 
-  function stopSynthesizerDrone() {
+  function stopWebAudioDrone() {
     if (synthGainNode && audioContext) {
       synthGainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 1);
       setTimeout(() => {
-        synthOscillators.forEach(osc => osc.stop());
-        synthOscillators = [];
+        synthOscs.forEach(o => o.stop());
+        synthOscs = [];
       }, 1000);
     }
   }
 
-  function playWeddingMusic() {
+  function playMusic() {
     weddingAudio.play().then(() => {
-      isMusicPlaying = true;
-      musicToggle.classList.add('playing');
-      musicStatusText.textContent = 'Music On';
+      isPlayingMusic = true;
+      discVinyl.classList.add('spinning');
+      audioStateTag.textContent = 'Playing';
     }).catch(() => {
-      // If external mp3 cannot load or is blocked, use Web Audio Drone
-      startSynthesizerDrone();
-      isMusicPlaying = true;
-      musicToggle.classList.add('playing');
-      musicStatusText.textContent = 'Music On';
+      // If external mp3 is blocked, use Web Audio Drone
+      startWebAudioDrone();
+      isPlayingMusic = true;
+      discVinyl.classList.add('spinning');
+      audioStateTag.textContent = 'Playing';
     });
   }
 
-  function pauseWeddingMusic() {
+  function pauseMusic() {
     weddingAudio.pause();
-    stopSynthesizerDrone();
-    isMusicPlaying = false;
-    musicToggle.classList.remove('playing');
-    musicStatusText.textContent = 'Music Off';
+    stopWebAudioDrone();
+    isPlayingMusic = false;
+    discVinyl.classList.remove('spinning');
+    audioStateTag.textContent = 'Paused';
   }
 
-  musicToggle.addEventListener('click', () => {
-    if (isMusicPlaying) {
-      pauseWeddingMusic();
+  audioDiscBtn.addEventListener('click', () => {
+    if (isPlayingMusic) {
+      pauseMusic();
     } else {
-      playWeddingMusic();
+      playMusic();
     }
   });
 
   /* ==========================================================================
-     3. 3D ENVELOPE OPENING & WAX SEAL CRACKLE
+     3. TACTILE WAX SEAL BREAK & ENVELOPE OPENING
      ========================================================================== */
   function openEnvelope() {
     if (isEnvelopeOpened) return;
     isEnvelopeOpened = true;
 
-    // Trigger seal crack effect
-    waxSeal.style.transform = 'translate(-50%, -50%) scale(1.25) rotate(10deg)';
-    envelope3D.classList.add('opened');
+    // Haptic feedback if supported on mobile
+    if (navigator.vibrate) {
+      navigator.vibrate([40, 60, 40]);
+    }
 
-    // Shower initial subtle gold sparks
-    showerPetalsAndGems(15);
+    // Trigger physical wax crack animation
+    waxSeal.style.transform = 'translate(-50%, -50%) scale(1.3) rotate(8deg)';
+    envelopePod.classList.add('unfolded');
 
-    // Start background music
-    playWeddingMusic();
+    // Shower initial celebratory gold sparks
+    showerPetals(16);
 
-    // After flap lifts & card peaks, switch to full card suite
+    // Start background wedding instrumental
+    playMusic();
+
+    // Smooth transition to the royal folio suite
     setTimeout(() => {
-      envelopeWrapper.classList.add('hidden');
-      cardSuite.classList.add('visible');
-      cardSuite.setAttribute('aria-hidden', 'false');
-      goToPage(0);
+      stageGate.classList.add('dismissed');
+      royalSuite.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       showToast('Welcome to the wedding invitation of Farman & Asma');
-    }, 1200);
+    }, 1150);
   }
 
   waxSeal.addEventListener('click', openEnvelope);
-  envelope3D.addEventListener('click', openEnvelope);
+  envelopePod.addEventListener('click', openEnvelope);
 
   /* ==========================================================================
-     4. PAGE NAVIGATION & TABS SLIDER
+     4. SCROLLSPY NAVIGATION CHIPS
      ========================================================================== */
-  function goToPage(index) {
-    if (index < 0 || index >= totalPages) return;
-    currentPageIndex = index;
+  const sections = document.querySelectorAll('.folio-section');
+  const observerOptions = {
+    root: null,
+    rootMargin: '-30% 0px -40% 0px',
+    threshold: 0
+  };
 
-    // Slide track
-    pagesTrack.style.transform = `translateX(-${index * 100}%)`;
-
-    // Update active page
-    pages.forEach((page, i) => {
-      if (i === index) {
-        page.classList.add('active');
-      } else {
-        page.classList.remove('active');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        navChips.forEach(chip => {
+          if (chip.getAttribute('href') === `#${id}`) {
+            chip.classList.add('active');
+          } else {
+            chip.classList.remove('active');
+          }
+        });
       }
     });
+  }, observerOptions);
 
-    // Update Tab state
-    tabBtns.forEach(btn => {
-      const pageNum = parseInt(btn.getAttribute('data-page'), 10);
-      if (pageNum === index) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
-    });
-
-    // Arrow controls visibility
-    if (navPrevBtn && navNextBtn) {
-      navPrevBtn.style.opacity = index === 0 ? '0.3' : '1';
-      navPrevBtn.style.pointerEvents = index === 0 ? 'none' : 'auto';
-      navNextBtn.style.opacity = index === totalPages - 1 ? '0.3' : '1';
-      navNextBtn.style.pointerEvents = index === totalPages - 1 ? 'none' : 'auto';
-    }
-
-    // Scroll smoothly to top of arch frame
-    cardSuite.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const targetPage = parseInt(btn.getAttribute('data-page'), 10);
-      goToPage(targetPage);
-    });
-  });
-
-  // Next / Prev button triggers inside pages
-  document.querySelectorAll('.next-page-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const target = parseInt(btn.getAttribute('data-target'), 10);
-      goToPage(target);
-    });
-  });
-
-  document.querySelectorAll('.prev-page-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const target = parseInt(btn.getAttribute('data-target'), 10);
-      goToPage(target);
-    });
-  });
-
-  if (restartTourBtn) {
-    restartTourBtn.addEventListener('click', () => {
-      goToPage(0);
-    });
-  }
-
-  if (navPrevBtn) navPrevBtn.addEventListener('click', () => goToPage(currentPageIndex - 1));
-  if (navNextBtn) navNextBtn.addEventListener('click', () => goToPage(currentPageIndex + 1));
-
-  // Keyboard navigation
-  window.addEventListener('keydown', (e) => {
-    if (!isEnvelopeOpened) return;
-    if (e.key === 'ArrowRight') goToPage(currentPageIndex + 1);
-    if (e.key === 'ArrowLeft') goToPage(currentPageIndex - 1);
-  });
-
-  // Mobile Touch Swipe Handling
-  let touchStartX = 0;
-  let touchEndX = 0;
-  const viewport = document.querySelector('.pages-viewport');
-
-  if (viewport) {
-    viewport.addEventListener('touchstart', (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-
-    viewport.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      handleSwipe();
-    }, { passive: true });
-  }
-
-  function handleSwipe() {
-    const swipeThreshold = 50;
-    if (touchEndX < touchStartX - swipeThreshold) {
-      goToPage(currentPageIndex + 1);
-    }
-    if (touchEndX > touchStartX + swipeThreshold) {
-      goToPage(currentPageIndex - 1);
-    }
-  }
+  sections.forEach(sec => observer.observe(sec));
 
   /* ==========================================================================
-     5. LIVE COUNTDOWN TIMER
+     5. LIVE COUNTDOWN CLOCKS (Saturday, 21 Nov 2026, 10:30 AM IST)
      ========================================================================== */
-  // Target: Saturday, 21 November 2026, 10:30 AM IST
-  const targetWeddingDate = new Date('2026-11-21T10:30:00+05:30').getTime();
+  const nikahDate = new Date('2026-11-21T10:30:00+05:30').getTime();
 
   function updateCountdown() {
     const now = new Date().getTime();
-    const distance = targetWeddingDate - now;
+    const diff = nikahDate - now;
 
-    if (distance < 0) {
-      document.getElementById('days').innerText = '00';
-      document.getElementById('hours').innerText = '00';
-      document.getElementById('minutes').innerText = '00';
-      document.getElementById('seconds').innerText = '00';
+    if (diff <= 0) {
+      document.getElementById('cd-days').innerText = '00';
+      document.getElementById('cd-hours').innerText = '00';
+      document.getElementById('cd-minutes').innerText = '00';
+      document.getElementById('cd-seconds').innerText = '00';
       return;
     }
 
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-    document.getElementById('days').innerText = String(days).padStart(2, '0');
-    document.getElementById('hours').innerText = String(hours).padStart(2, '0');
-    document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
-    document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
+    document.getElementById('cd-days').innerText = String(days).padStart(2, '0');
+    document.getElementById('cd-hours').innerText = String(hours).padStart(2, '0');
+    document.getElementById('cd-minutes').innerText = String(minutes).padStart(2, '0');
+    document.getElementById('cd-seconds').innerText = String(seconds).padStart(2, '0');
   }
 
   setInterval(updateCountdown, 1000);
@@ -354,92 +267,69 @@ document.addEventListener('DOMContentLoaded', () => {
      6. COPY VENUE ADDRESS & TOAST POPUP
      ========================================================================== */
   function showToast(message) {
-    if (!toastPopup) return;
-    toastPopup.textContent = message;
-    toastPopup.classList.add('show');
+    if (!royalToast) return;
+    royalToast.textContent = message;
+    royalToast.classList.add('active');
     setTimeout(() => {
-      toastPopup.classList.remove('show');
+      royalToast.classList.remove('active');
     }, 3200);
   }
 
-  if (copyAddressBtn) {
-    copyAddressBtn.addEventListener('click', () => {
-      const addressText = "The Grand Imperial Palace & Gardens, Royal Heritage Enclave, Palace Road, Ahmedabad, Gujarat - 380001";
-      navigator.clipboard.writeText(addressText).then(() => {
-        copyText.textContent = "Copied!";
-        showToast("✓ Venue address copied to clipboard!");
+  if (copyAddressAction) {
+    copyAddressAction.addEventListener('click', () => {
+      const address = "The Grand Imperial Palace & Heritage Lawns, Royal Heritage Enclave, Palace Road, Ahmedabad, Gujarat — 380001";
+      navigator.clipboard.writeText(address).then(() => {
+        copyStatusText.textContent = "Copied!";
+        showToast("✓ Palace address copied to clipboard!");
         setTimeout(() => {
-          copyText.textContent = "Copy Address";
+          copyStatusText.textContent = "Copy Address";
         }, 2500);
       }).catch(() => {
-        showToast("Address: Ahmedabad, Gujarat - 380001");
+        showToast("Address: Ahmedabad, Gujarat — 380001");
       });
     });
   }
 
   /* ==========================================================================
-     7. SHOWER ROSE PETALS & DUAS EFFECT
+     7. REALISTIC ROSE PETAL SHOWER EFFECT
      ========================================================================== */
-  function showerPetalsAndGems(count = 35) {
+  function showerPetals(count = 35) {
     const petals = ['🌸', '🌺', '🌹', '✨', '🤍', '🍃'];
     for (let i = 0; i < count; i++) {
       const petal = document.createElement('div');
-      petal.classList.add('falling-petal');
+      petal.classList.add('rose-petal-speck');
       petal.textContent = petals[Math.floor(Math.random() * petals.length)];
-      petal.style.left = `${Math.random() * 96}%`;
-      petal.style.animationDuration = `${Math.random() * 2.5 + 2.5}s`;
-      petal.style.animationDelay = `${Math.random() * 1.5}s`;
+      petal.style.left = `${Math.random() * 95}%`;
+      petal.style.animationDuration = `${Math.random() * 2.2 + 2.8}s`;
+      petal.style.animationDelay = `${Math.random() * 1.4}s`;
       petal.style.fontSize = `${Math.random() * 14 + 18}px`;
       document.body.appendChild(petal);
 
-      // Clean up after animation
       setTimeout(() => {
         petal.remove();
-      }, 5000);
+      }, 5500);
     }
   }
 
-  if (blessingShowerBtn) {
-    blessingShowerBtn.addEventListener('click', () => {
-      showerPetalsAndGems(45);
-      showToast("✨ May Allah shower His bountiful blessings upon Farman & Asma!");
+  if (showerPetalsAction) {
+    showerPetalsAction.addEventListener('click', () => {
+      showerPetals(45);
+      showToast("✨ May Allah shower His blessings upon Farman & Asma!");
     });
   }
 
   /* ==========================================================================
      8. ADD TO GOOGLE CALENDAR
      ========================================================================== */
-  if (calendarBtn) {
-    calendarBtn.addEventListener('click', () => {
+  if (addCalendarBtn) {
+    addCalendarBtn.addEventListener('click', () => {
       const title = encodeURIComponent("Farman & Asma's Royal Wedding Celebrations");
-      const details = encodeURIComponent("Join us in celebrating the auspicious wedding ceremonies (Mehndi, Nikah & Walima) of Farman & Asma. Venue: The Grand Imperial Palace, Ahmedabad.");
-      const location = encodeURIComponent("The Grand Imperial Palace & Gardens, Ahmedabad, Gujarat");
-      // 21 Nov 2026 to 22 Nov 2026 UTC format
+      const details = encodeURIComponent("Join us in celebrating the holy Nikah and wedding ceremonies of Farman & Asma. Venue: The Grand Imperial Palace, Ahmedabad.");
+      const location = encodeURIComponent("The Grand Imperial Palace & Heritage Lawns, Ahmedabad, Gujarat");
       const dates = "20261121T050000Z/20261122T140000Z";
       const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}&location=${location}`;
       window.open(gcalUrl, '_blank');
       showToast("Opening Google Calendar...");
-    });
-  }
-
-  /* ==========================================================================
-     9. SHARE INVITATION
-     ========================================================================== */
-  if (shareBtn) {
-    shareBtn.addEventListener('click', () => {
-      const shareData = {
-        title: "Farman & Asma Wedding Invitation",
-        text: "You are warmly invited to the wedding celebrations of Farman & Asma. Tap to open the royal invitation card!",
-        url: window.location.href
-      };
-
-      if (navigator.share) {
-        navigator.share(shareData).catch(() => {});
-      } else {
-        navigator.clipboard.writeText(window.location.href).then(() => {
-          showToast("✓ Invitation link copied to clipboard!");
-        });
-      }
     });
   }
 });
