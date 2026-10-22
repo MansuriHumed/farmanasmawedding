@@ -3,407 +3,618 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="#070c1a" />
+  <meta name="theme-color" content="#0d241a" />
   
-  <title>Farman &amp; Asma — 3D Royal Wedding Experience</title>
+  <title>Farman &amp; Asma — Royal 3D Wedding Dawat-Nama</title>
   
-  <meta name="description" content="An interactive 3D Royal Wedding Invitation for Farman & Asma. Experience the grand celebration." />
-  <meta property="og:title" content="Farman &amp; Asma — 3D Royal Wedding Invitation" />
-  <meta property="og:description" content="Experience the 3D unfolded royal dawat-nama of Farman & Asma. Tap to open the palace gates." />
+  <meta name="description" content="In the Name of Allah, the Most Gracious, the Most Merciful. Royal Wedding Invitation of Farman Sunasara & Asma Ghogha, 04-05 November 2026, Basu, Gujarat." />
+  <meta property="og:title" content="Farman &amp; Asma — Royal Wedding Invitation" />
+  <meta property="og:description" content="Tap the royal wax seal to untie the silk ribbon & open the 3D royal dawat-nama." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://mansurihumed.github.io/farmanasmawedding/" />
 
-  <!-- Google Fonts: Luxurious Royal Serif & Calligraphy -->
+  <!-- Google Fonts: Luxurious Royal Fonts & Gujarati / Arabic Calligraphy -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Allura&family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- Background 3D Space: Three.js / Canvas Stardust Field -->
-  <canvas id="stars-canvas"></canvas>
+  <!-- 3D Canvas for Falling Rose & Jasmine Petals and Gold Stardust -->
+  <canvas id="ambient-canvas"></canvas>
 
-  <!-- Floating Audio & 3D Controls -->
-  <header class="royal-hud">
-    <div class="hud-brand">
-      <span class="hud-crest">❖</span>
-      <span class="hud-monogram">F &amp; A</span>
+  <!-- Floating Spotify-Style Royal Music Controller -->
+  <aside class="spotify-audio-dock" id="music-dock">
+    <div class="dock-track-disc" id="dock-disc">
+      <div class="disc-core"></div>
     </div>
+    <div class="dock-meta">
+      <span class="dock-title">Kudrat Ne Banya Saath</span>
+      <span class="dock-artist">Traditional Shehnai &amp; Sitar</span>
+    </div>
+    <button class="dock-play-btn" id="dock-play-btn" aria-label="Play / Pause Wedding Soundtrack">
+      <span class="play-icon" id="play-btn-icon">▶</span>
+    </button>
+  </aside>
 
-    <div class="hud-actions">
-      <!-- 3D Gyroscope/Tilt Indicator -->
-      <div class="hud-chip" id="tilt-chip" title="Move cursor or tilt phone to rotate in 3D">
-        <span class="chip-dot"></span>
-        <span class="chip-text">3D Parallax Active</span>
+  <!-- Hanging Brass Moroccan Lanterns with Warm Candle Flicker -->
+  <div class="brass-lantern lantern-l" aria-hidden="true">
+    <div class="brass-chain"></div>
+    <div class="brass-dome"></div>
+    <div class="brass-cage">
+      <div class="flame-glow"></div>
+    </div>
+    <div class="brass-bell">✦</div>
+  </div>
+
+  <div class="brass-lantern lantern-r" aria-hidden="true">
+    <div class="brass-chain"></div>
+    <div class="brass-dome"></div>
+    <div class="brass-cage">
+      <div class="flame-glow"></div>
+    </div>
+    <div class="brass-bell">✦</div>
+  </div>
+
+  <!-- MAIN 3D EXPERIENCE STAGE -->
+  <main class="viewport-3d-stage" id="stage-viewport">
+
+    <!-- ====================================================================
+         PHASE 1: THE 3D VELVET FOLIO BOX WITH SILK RIBBON & WAX SEAL
+         ==================================================================== -->
+    <section class="box-3d-wrapper" id="box-wrapper" aria-label="Royal Wedding Invitation Box">
+      <div class="box-proclamation-header">
+        <span class="crest-subtitle">IN THE NAME OF ALLAH</span>
+        <h1 class="box-couple-headline">Farman &amp; Asma</h1>
+        <p class="box-hint-instruction">Tap the wax seal to untie ribbon &amp; open</p>
       </div>
 
-      <!-- Music Toggle with Visualizer -->
-      <button class="music-pill" id="music-pill" aria-label="Toggle Wedding Music">
-        <span class="equalizer">
-          <i></i><i></i><i></i><i></i>
-        </span>
-        <span id="music-pill-label">Soundtrack</span>
-      </button>
-    </div>
-  </header>
+      <!-- 3D Folio Box Assembly -->
+      <div class="velvet-box-3d" id="velvet-box">
+        <!-- Box Back Shadow Layer -->
+        <div class="box-shadow-layer"></div>
 
-  <!-- 3D SCENE WRAPPER (Perspective Stage) -->
-  <div class="scene-3d-stage" id="scene-stage">
-
-    <!-- 1. THE 3D IMPERIAL PALACE GATES (Initial Locked State) -->
-    <div class="gate-3d-assembly" id="gate-assembly">
-      <div class="gate-arch-portal">
-        <!-- Left Palace Door with Mughal Jali -->
-        <div class="gate-door gate-door-left" id="door-left">
-          <div class="door-inner">
-            <div class="jali-grid"></div>
-            <div class="door-ornament">✦</div>
-            <div class="door-handle"></div>
+        <!-- Left Gatefold Velvet Flap -->
+        <div class="box-gate gate-left" id="gate-left">
+          <div class="gate-texture">
+            <div class="botanical-foliage-watermark left-watermark"></div>
+            <div class="gold-emboss-corner corner-tl"></div>
+            <div class="gold-emboss-corner corner-bl"></div>
           </div>
         </div>
 
-        <!-- Right Palace Door with Mughal Jali -->
-        <div class="gate-door gate-door-right" id="door-right">
-          <div class="door-inner">
-            <div class="jali-grid"></div>
-            <div class="door-ornament">✦</div>
-            <div class="door-handle"></div>
+        <!-- Right Gatefold Velvet Flap -->
+        <div class="box-gate gate-right" id="gate-right">
+          <div class="gate-texture">
+            <div class="botanical-foliage-watermark right-watermark"></div>
+            <div class="gold-emboss-corner corner-tr"></div>
+            <div class="gold-emboss-corner corner-br"></div>
           </div>
         </div>
 
-        <!-- Center 3D Golden Crest & Seal to Unlock -->
-        <div class="center-unlock-pod" id="unlock-seal" role="button" tabindex="0" aria-label="Unlock and open the 3D palace gates">
-          <div class="unlock-ring outer-spin"></div>
-          <div class="unlock-ring inner-spin"></div>
-          <div class="unlock-core">
-            <span class="unlock-bismillah">﷽</span>
-            <span class="unlock-title">Farman &amp; Asma</span>
-            <span class="unlock-btn-badge">TAP TO UNLOCK</span>
+        <!-- Satin Silk Ribbon Tied Horizontally Across Box -->
+        <div class="silk-ribbon-band" id="silk-ribbon">
+          <div class="ribbon-tail tail-left"></div>
+          <div class="ribbon-tail tail-right"></div>
+        </div>
+
+        <!-- Authentic 3D Brass & Wax Seal with F&A Monogram -->
+        <div class="wax-seal-3d" id="wax-seal" role="button" tabindex="0" aria-label="Break Seal and Open Invitation">
+          <div class="seal-crackle-fx"></div>
+          <div class="seal-wax-ring">
+            <div class="seal-stamp-face">
+              <span class="seal-bismillah-top">﷽</span>
+              <span class="seal-monogram-initials">F &amp; A</span>
+              <span class="seal-year">2026</span>
+            </div>
           </div>
-          <div class="unlock-glow"></div>
+          <span class="seal-prompt-pill">TAP TO OPEN</span>
         </div>
       </div>
-      <p class="gate-sub-hint">Experience The Royal 3D Dawat-Nama</p>
-    </div>
+    </section>
 
-    <!-- 2. THE 3D FLOATING HOLOGRAPHIC ROYAL BOOK (Revealed After Gate Opens) -->
-    <main class="book-3d-container hidden" id="book-container">
+    <!-- ====================================================================
+         PHASE 2: THE 3D INTERACTIVE UNFOLDED WEDDING BOOK / ALBUM
+         ==================================================================== -->
+    <section class="suite-3d-deck hidden" id="suite-deck" aria-label="Wedding Invitation Suite">
       
-      <!-- 3D Tilting Card Board with Realistic Dynamic Glare -->
-      <div class="card-3d-mesh" id="card-mesh">
-        <div class="card-specular-glare" id="card-glare"></div>
+      <!-- 3D Interactive Tilting Mesh (Tracks mouse & device gyroscope) -->
+      <div class="parchment-3d-card" id="parchment-card">
         
-        <!-- Golden Frame & Ornate Corner Fleurons -->
-        <div class="mesh-corner tl"></div>
-        <div class="mesh-corner tr"></div>
-        <div class="mesh-corner bl"></div>
-        <div class="mesh-corner br"></div>
+        <!-- Specular Holographic Glare that moves with tilt -->
+        <div class="card-light-glare" id="card-glare"></div>
 
-        <!-- Book Header Controls (3D Page Tabs) -->
-        <nav class="book-tabs" aria-label="Book Chapters">
-          <button class="book-tab active" data-page="0">
-            <span class="tab-num">I</span>
-            <span class="tab-title">Shahi Farman</span>
+        <!-- Ornate Deckle Edge Border & Filigree Corners -->
+        <div class="deckle-gold-rim"></div>
+        <div class="filigree-corner c-tl"></div>
+        <div class="filigree-corner c-tr"></div>
+        <div class="filigree-corner c-bl"></div>
+        <div class="filigree-corner c-br"></div>
+
+        <!-- Floating Chapter Selector Tabs -->
+        <nav class="chapter-tabs" aria-label="Invitation Chapters">
+          <button class="chapter-tab active" data-chapter="0">
+            <span class="tab-roman">I</span>
+            <span class="tab-text">Bismillah</span>
           </button>
-          <button class="book-tab" data-page="1">
-            <span class="tab-num">II</span>
-            <span class="tab-title">Ceremonies</span>
+          <button class="chapter-tab" data-chapter="1">
+            <span class="tab-roman">II</span>
+            <span class="tab-text">Ceremonies</span>
           </button>
-          <button class="book-tab" data-page="2">
-            <span class="tab-num">III</span>
-            <span class="tab-title">The Palace</span>
+          <button class="chapter-tab" data-chapter="2">
+            <span class="tab-roman">III</span>
+            <span class="tab-text">Palace &amp; Map</span>
           </button>
-          <button class="book-tab" data-page="3">
-            <span class="tab-num">IV</span>
-            <span class="tab-title">RSVP &amp; Duas</span>
+          <button class="chapter-tab" data-chapter="3">
+            <span class="tab-roman">IV</span>
+            <span class="tab-text">Duageer &amp; Kids</span>
+          </button>
+          <button class="chapter-tab" data-chapter="4">
+            <span class="tab-roman">V</span>
+            <span class="tab-text">RSVP</span>
           </button>
         </nav>
 
-        <!-- Pages 3D Deck -->
-        <div class="deck-viewport">
-          <div class="deck-reel" id="deck-reel">
+        <!-- Viewport & Slider Reel -->
+        <div class="chapters-viewport">
+          <div class="chapters-track" id="chapters-track">
 
-            <!-- CHAPTER 1: THE SACRED UNION & BISMILLAH -->
-            <section class="deck-page active" id="page-proclamation" data-index="0">
-              <div class="chapter-content">
-                <div class="floating-bismillah-3d">
+            <!-- --------------------------------------------------------
+                 CHAPTER 1: SACRED PROCLAMATION & BISMILLAH
+                 -------------------------------------------------------- -->
+            <article class="chapter-page active" id="ch-intro" data-page="0">
+              <div class="page-inner center-text">
+                
+                <!-- Bismillah Calligraphy -->
+                <div class="arabic-bismillah-3d" title="Bismillahir Rahmanir Raheem">
                   بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
                 </div>
 
-                <div class="quran-gilded-slab">
-                  <p class="quran-ar">
+                <!-- Surah Ar-Rum Parchment Scroll -->
+                <div class="surah-scroll-pod">
+                  <div class="eucalyptus-wreath-top">🌿 &nbsp; ❖ &nbsp; 🌿</div>
+                  <p class="arabic-verse-text">
                     وَمِنْ ءَايَٰتِهِۦٓ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَٰجًا لِّتَسْكُنُوٓا۟ إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً
                   </p>
-                  <div class="slab-divider">✦ ❖ ✦</div>
-                  <p class="quran-en">
-                    “And of His signs is that He created for you mates from among yourselves, that you may find tranquility in them; and He placed between you affection and mercy.”
+                  <div class="verse-thin-gold-line"></div>
+                  <p class="verse-english-text">
+                    “And of His signs is that He created for you mates from among yourselves, that you may dwell in tranquility with them; and He placed between you affection and mercy.”
                   </p>
-                  <span class="quran-ref">— SURAH AR-RUM [30:21] —</span>
+                  <span class="verse-surah-tag">— SURAH AR-RUM [30:21] —</span>
                 </div>
 
-                <div class="invitation-decree">
-                  <span class="decree-badge">SHAHI DAWAT-E-KHAS</span>
-                  <p class="decree-lead">Together with their families</p>
-                  <p class="decree-call">Solicit the honour of your presence at the wedding celebrations of</p>
+                <!-- Invitation Lead Text -->
+                <div class="invitation-intro-block">
+                  <p class="proclamation-tag">ROYAL DAWAT-E-KHAS</p>
+                  <p class="proclamation-lead">Together with our elders and families,</p>
+                  <p class="proclamation-invite">we solicit the pleasure of your company and heartfelt prayers at the wedding of</p>
                 </div>
 
-                <!-- 3D Holographic Name Plate -->
-                <div class="holographic-names-plate">
-                  <h1 class="groom-foil">Farman</h1>
-                  <div class="intertwined-amp">
-                    <span class="amp-ray"></span>
-                    <span class="amp-text">&amp;</span>
-                    <span class="amp-ray"></span>
+                <!-- Couple Highlight with 24K Liquid Gold Foil Shimmer -->
+                <div class="couple-foil-presentation">
+                  <div class="couple-card-side">
+                    <h2 class="name-groom-3d">Farman</h2>
+                    <span class="person-role">Groom</span>
+                    <p class="parent-attribution">S/o Mr. Aslam Ismail Sunasara (But)</p>
+                    <span class="native-tag">Basu, Gujarat</span>
                   </div>
-                  <h1 class="bride-foil">Asma</h1>
-                </div>
 
-                <p class="decree-blessing">As they begin this sacred journey of eternal love and shared faith.</p>
+                  <div class="intertwined-knot">
+                    <span class="knot-line"></span>
+                    <span class="knot-amp">&amp;</span>
+                    <span class="knot-line"></span>
+                  </div>
 
-                <!-- 3D Live Countdown Pod -->
-                <div class="countdown-3d-pod">
-                  <div class="pod-header">TIME UNTIL THE SACRED NIKAH</div>
-                  <div class="pod-units">
-                    <div class="pod-cell">
-                      <span class="val" id="cd-days">00</span>
-                      <span class="lbl">Days</span>
-                    </div>
-                    <div class="pod-cell">
-                      <span class="val" id="cd-hours">00</span>
-                      <span class="lbl">Hours</span>
-                    </div>
-                    <div class="pod-cell">
-                      <span class="val" id="cd-minutes">00</span>
-                      <span class="lbl">Mins</span>
-                    </div>
-                    <div class="pod-cell">
-                      <span class="val" id="cd-seconds">00</span>
-                      <span class="lbl">Secs</span>
-                    </div>
+                  <div class="couple-card-side">
+                    <h2 class="name-bride-3d">Asma</h2>
+                    <span class="person-role">Bride</span>
+                    <p class="parent-attribution">D/o Mr. Abdul Sharif Ghogha</p>
+                    <span class="native-tag">Basu, Gujarat</span>
                   </div>
                 </div>
 
-                <button class="btn-3d-action" data-nav="1">
-                  <span>Explore Ceremonies</span>
+                <!-- 3D Live Countdown Pod to Nikah -->
+                <div class="countdown-deck-pod">
+                  <div class="countdown-badge-title">COUNTDOWN TO NIKAH (05 NOV 2026, 09:00 AM)</div>
+                  <div class="countdown-cells-grid">
+                    <div class="cd-cell">
+                      <span class="cd-number" id="days-val">00</span>
+                      <span class="cd-label">Days</span>
+                    </div>
+                    <div class="cd-cell">
+                      <span class="cd-number" id="hours-val">00</span>
+                      <span class="cd-label">Hours</span>
+                    </div>
+                    <div class="cd-cell">
+                      <span class="cd-number" id="mins-val">00</span>
+                      <span class="cd-label">Minutes</span>
+                    </div>
+                    <div class="cd-cell">
+                      <span class="cd-number" id="secs-val">00</span>
+                      <span class="cd-label">Seconds</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button class="gold-cta-btn" data-go="1">
+                  <span>View Wedding Ceremonies</span>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </button>
+
               </div>
-            </section>
+            </article>
 
-            <!-- CHAPTER 2: WEDDING CEREMONIES -->
-            <section class="deck-page" id="page-ceremonies" data-index="1">
-              <div class="chapter-content">
-                <div class="chapter-header">
-                  <span class="chapter-tag">PROGRAM OF EVENTS</span>
-                  <h2 class="chapter-title">Auspicious Ceremonies</h2>
-                </div>
+            <!-- --------------------------------------------------------
+                 CHAPTER 2: CEREMONIES & EVENTS (MEHNDI, NIKAH, DAAWAT)
+                 -------------------------------------------------------- -->
+            <article class="chapter-page" id="ch-events" data-page="1">
+              <div class="page-inner">
+                <header class="section-title-wrap">
+                  <span class="section-tag-gold">ITINERARY OF BLESSINGS</span>
+                  <h3 class="section-heading-h3">Wedding Ceremonies</h3>
+                  <p class="section-sub-desc">Join us in every sacred tradition and joyful moment</p>
+                </header>
 
-                <div class="ceremonies-grid-3d">
-                  <!-- Mehndi Card -->
-                  <div class="ceremony-slab">
-                    <div class="slab-badge">PRE-WEDDING</div>
-                    <div class="slab-dua">مَا شَاءَ ٱللَّٰهُ</div>
-                    <h3 class="slab-title">Mehndi &amp; Sangeet</h3>
-                    <p class="slab-desc">An evening of henna, music, dance and radiant laughter</p>
-                    <div class="slab-timings">
-                      <div class="time-item">
-                        <span class="ico">📅</span>
-                        <strong>Friday, 20 Nov 2026</strong>
+                <div class="events-deck-cards">
+                  
+                  <!-- EVENT 1: MEHNDI CEREMONY -->
+                  <div class="event-card-item" data-ev="mehndi">
+                    <div class="event-header-row">
+                      <span class="event-tag-pill">PRE-WEDDING</span>
+                      <span class="arabic-tag-dua">مَا شَاءَ ٱللَّٰهُ</span>
+                    </div>
+
+                    <h4 class="event-name-h4">Mehndi Ceremony</h4>
+                    <p class="event-tagline-text">An auspicious evening of henna, music and radiant celebration</p>
+
+                    <!-- Self-Drawing Animated Henna SVG Vine -->
+                    <div class="henna-drawing-art">
+                      <svg viewBox="0 0 300 40" class="henna-svg" fill="none">
+                        <path class="henna-path" d="M10 20 Q 75 5, 150 20 T 290 20" stroke="url(#hennaGold)" stroke-width="1.5" stroke-dasharray="300" stroke-dashoffset="300"/>
+                        <circle cx="150" cy="20" r="3" fill="#ffd700"/>
+                        <defs>
+                          <linearGradient id="hennaGold" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="#b68930"/>
+                            <stop offset="50%" stop-color="#ffd700"/>
+                            <stop offset="100%" stop-color="#b68930"/>
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                    </div>
+
+                    <div class="event-details-grid">
+                      <div class="dt-block">
+                        <span class="dt-ico">📅</span>
+                        <div>
+                          <span class="dt-lbl">Date</span>
+                          <strong class="dt-val">Wednesday, 04 November 2026</strong>
+                        </div>
                       </div>
-                      <div class="time-item">
-                        <span class="ico">⏰</span>
-                        <strong>07:30 PM Onwards</strong>
+                      <div class="dt-block">
+                        <span class="dt-ico">⏰</span>
+                        <div>
+                          <span class="dt-lbl">Time</span>
+                          <strong class="dt-val">07:30 PM Onwards</strong>
+                        </div>
                       </div>
                     </div>
-                    <div class="slab-loc">📍 Shahi Emerald Lawn, Grand Imperial</div>
+
+                    <div class="event-actions-row">
+                      <button class="cal-single-btn" data-cal-title="Farman & Asma - Mehndi Ceremony" data-cal-start="20261104T140000Z" data-cal-end="20261104T180000Z">
+                        <span>+ Add to Calendar</span>
+                      </button>
+                    </div>
                   </div>
 
-                  <!-- Nikah Card (Featured) -->
-                  <div class="ceremony-slab grand-nikah-slab">
-                    <div class="nikah-crown">✦ THE SACRED NIKAH ✦</div>
-                    <div class="slab-dua gold-dua">بَارَكَ ٱللَّٰهُ لَكَ</div>
-                    <h3 class="slab-title gold-title">The Nikah Ceremony</h3>
-                    <p class="slab-desc">The holy covenant solemnized with sacred prayers &amp; duas</p>
+                  <!-- EVENT 2: NIKAH CEREMONY (GRAND COVENANT) -->
+                  <div class="event-card-item nikah-featured-item" data-ev="nikah">
+                    <div class="nikah-royal-crown">👑 THE HOLY COVENANT 👑</div>
                     
-                    <div class="slab-timings gold-timings">
-                      <div class="time-item">
-                        <span class="ico">📅</span>
-                        <strong>Saturday, 21 Nov 2026</strong>
+                    <div class="event-header-row">
+                      <span class="event-tag-pill gold-pill">SACRED NIKAH</span>
+                      <span class="arabic-tag-dua gold-dua">النِّكَاح</span>
+                    </div>
+
+                    <h4 class="event-name-h4 gold-glow-title">The Nikah Ceremony</h4>
+                    <p class="event-tagline-text">The sacred covenant of marriage solemnized with holy duas</p>
+
+                    <div class="event-details-grid gold-grid">
+                      <div class="dt-block">
+                        <span class="dt-ico">📅</span>
+                        <div>
+                          <span class="dt-lbl">Auspicious Date</span>
+                          <strong class="dt-val gold-txt">Thursday, 05 November 2026</strong>
+                        </div>
                       </div>
-                      <div class="time-item">
-                        <span class="ico">⏰</span>
-                        <strong>10:30 AM (Baraat &amp; Nikah)</strong>
+                      <div class="dt-block">
+                        <span class="dt-ico">⏰</span>
+                        <div>
+                          <span class="dt-lbl">Nikah Time</span>
+                          <strong class="dt-val gold-txt">09:00 AM Sharp</strong>
+                        </div>
                       </div>
                     </div>
 
-                    <div class="prophetic-box">
-                      <em>“Barakallahu laka wa baraka 'alayka wa jama'a baynakuma fi khayr”</em>
+                    <!-- Sacred Prophetic Dua -->
+                    <div class="prophetic-dua-plaque">
+                      <div class="dua-ar-text">بَارَكَ ٱللَّٰهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ</div>
+                      <div class="dua-en-text">“May Allah bless you, shower His blessings upon you, and unite you both in goodness.”</div>
                     </div>
-                    <div class="slab-loc">📍 The Royal Darbar Hall, Grand Imperial Palace</div>
+
+                    <div class="event-actions-row">
+                      <button class="cal-single-btn gold-cal" data-cal-title="Farman & Asma - Sacred Nikah Ceremony" data-cal-start="20261105T033000Z" data-cal-end="20261105T060000Z">
+                        <span>+ Add Nikah to Google Calendar</span>
+                      </button>
+                    </div>
                   </div>
 
-                  <!-- Walima Card -->
-                  <div class="ceremony-slab">
-                    <div class="slab-badge">GRAND FEAST</div>
-                    <div class="slab-dua">ٱلْحَمْدُ لِلَّٰهِ</div>
-                    <h3 class="slab-title">Dawat-e-Walima</h3>
-                    <p class="slab-desc">Celebration of union followed by traditional dinner banquet</p>
-                    <div class="slab-timings">
-                      <div class="time-item">
-                        <span class="ico">📅</span>
-                        <strong>Sunday, 22 Nov 2026</strong>
+                  <!-- EVENT 3: DAAWAT (WEDDING FEAST & RECEPTION) -->
+                  <div class="event-card-item" data-ev="daawat">
+                    <div class="event-header-row">
+                      <span class="event-tag-pill">WEDDING BANQUET</span>
+                      <span class="arabic-tag-dua">ٱلْحَمْدُ لِلَّٰهِ</span>
+                    </div>
+
+                    <h4 class="event-name-h4">Daawat (Wedding Feast)</h4>
+                    <p class="event-tagline-text">A grand feast of joy, heartfelt conversation and hospitality</p>
+
+                    <div class="event-details-grid">
+                      <div class="dt-block">
+                        <span class="dt-ico">📅</span>
+                        <div>
+                          <span class="dt-lbl">Date</span>
+                          <strong class="dt-val">Thursday, 05 November 2026</strong>
+                        </div>
                       </div>
-                      <div class="time-item">
-                        <span class="ico">⏰</span>
-                        <strong>01:00 PM (Lunch Feast)</strong>
+                      <div class="dt-block">
+                        <span class="dt-ico">⏰</span>
+                        <div>
+                          <span class="dt-lbl">Banquet Time</span>
+                          <strong class="dt-val">10:00 AM Onwards</strong>
+                        </div>
                       </div>
                     </div>
-                    <div class="slab-loc">📍 Crystal Ballroom, Grand Imperial</div>
+
+                    <div class="event-actions-row">
+                      <button class="cal-single-btn" data-cal-title="Farman & Asma - Daawat Wedding Feast" data-cal-start="20261105T043000Z" data-cal-end="20261105T100000Z">
+                        <span>+ Add to Calendar</span>
+                      </button>
+                    </div>
                   </div>
+
                 </div>
 
-                <div class="step-nav-row">
-                  <button class="btn-3d-secondary" data-nav="0">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                <div class="page-nav-buttons">
+                  <button class="gold-outline-btn" data-go="0">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
                     <span>Back</span>
                   </button>
-                  <button class="btn-3d-action" data-nav="2">
-                    <span>Palace Location</span>
+                  <button class="gold-cta-btn" data-go="2">
+                    <span>Palace Venue &amp; Map</span>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
                   </button>
                 </div>
+
               </div>
-            </section>
+            </article>
 
-            <!-- CHAPTER 3: THE VENUE & FAMILY -->
-            <section class="deck-page" id="page-location" data-index="2">
-              <div class="chapter-content">
-                <div class="chapter-header">
-                  <span class="chapter-tag">VENUE DESTINATION</span>
-                  <h2 class="chapter-title">The Grand Palace</h2>
-                </div>
+            <!-- --------------------------------------------------------
+                 CHAPTER 3: VENUE & GOOGLE MAPS DIRECT ROUTE
+                 -------------------------------------------------------- -->
+            <article class="chapter-page" id="ch-venue" data-page="2">
+              <div class="page-inner center-text">
+                <header class="section-title-wrap">
+                  <span class="section-tag-gold">DESTINATION &amp; ROUTE</span>
+                  <h3 class="section-heading-h3">The Wedding Venue</h3>
+                  <p class="section-sub-desc">We look forward to welcoming you with warm hearts</p>
+                </header>
 
-                <div class="venue-showcase-3d">
-                  <div class="venue-jharokha">
-                    <div class="arch-window">
-                      <div class="crescent-moon">🌙</div>
-                      <div class="palace-diorama"></div>
-                    </div>
+                <div class="venue-grand-box">
+                  <div class="venue-crest-icon">
+                    <div class="pin-ring">📍</div>
                   </div>
 
-                  <h3 class="venue-palace-name">The Grand Imperial Palace &amp; Gardens</h3>
-                  <p class="venue-full-address" id="venue-address-text">
-                    Royal Heritage Enclave, Palace Road,<br />
-                    Near City Center, Ahmedabad, Gujarat — 380001
+                  <h4 class="venue-residence-name">Prajapati Vas, Tokariya Road</h4>
+                  <p class="venue-address-details" id="venue-text-content">
+                    Prajapati Vas, Tokariya Road, Basu,<br />
+                    Ta. Vadgam, Banaskantha, Gujarat — 385520
                   </p>
 
-                  <div class="venue-action-buttons">
-                    <a href="https://maps.google.com/?q=Ahmedabad" target="_blank" rel="noopener noreferrer" class="btn-3d-action">
+                  <div class="venue-buttons-grid">
+                    <!-- Direct Google Maps link from brief -->
+                    <a href="https://maps.app.goo.gl/4twM241RwBFF296p8" target="_blank" rel="noopener noreferrer" class="maps-direct-btn">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"></path><circle cx="12" cy="9" r="2.5"></circle></svg>
-                      <span>Navigate via Google Maps</span>
+                      <span>Open in Google Maps</span>
                     </a>
-                    <button class="btn-3d-secondary" id="copy-address-btn">
+
+                    <button class="copy-address-action" id="copy-venue-btn">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                      <span id="copy-btn-text">Copy Address</span>
+                      <span id="copy-btn-label">Copy Address</span>
                     </button>
                   </div>
                 </div>
 
-                <!-- Family Honor Block -->
-                <div class="family-honor-pod">
-                  <p class="honor-heading">WITH BEST COMPLIMENTS FROM</p>
-                  <div class="family-pill-rack">
-                    <span class="pill-family">Mansuri Family</span>
-                    <span class="pill-family">Sunasara Family</span>
-                    <span class="pill-family">Relatives &amp; Well-Wishers</span>
-                  </div>
-                  <p class="honor-quote">“Your gracious presence and prayers are our greatest gift.”</p>
+                <!-- Google Maps Interactive Preview Embed Card -->
+                <div class="maps-preview-card">
+                  <iframe 
+                    title="Basu, Gujarat Location Map"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14605.356230495837!2d72.485121!3d24.088656!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395ce6eb3d15b07d%3A0x633512b9dcf71ca!2sBasu%2C%20Gujarat%20385520!5e0!3m2!1sen!2sin!4v1700000000000"
+                    width="100%" 
+                    height="200" 
+                    style="border:0; border-radius: 14px;" 
+                    allowfullscreen="" 
+                    loading="lazy">
+                  </iframe>
                 </div>
 
-                <div class="step-nav-row">
-                  <button class="btn-3d-secondary" data-nav="1">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                <div class="page-nav-buttons">
+                  <button class="gold-outline-btn" data-go="1">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
                     <span>Back</span>
                   </button>
-                  <button class="btn-3d-action" data-nav="3">
-                    <span>Send Wishes &amp; RSVP</span>
+                  <button class="gold-cta-btn" data-go="3">
+                    <span>Elders &amp; Little Ones</span>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
                   </button>
                 </div>
-              </div>
-            </section>
 
-            <!-- CHAPTER 4: RSVP & ROSE PETAL SHOWER -->
-            <section class="deck-page" id="page-rsvp-wishes" data-index="3">
-              <div class="chapter-content">
-                <div class="chapter-header">
-                  <span class="chapter-tag">CONFIRM ATTENDANCE</span>
-                  <h2 class="chapter-title">RSVP &amp; Blessings</h2>
+              </div>
+            </article>
+
+            <!-- --------------------------------------------------------
+                 CHAPTER 4: DUAGEER (દુઆગીર) & FULO KI FARMAISH (ફુલો કી ફરમાઇશ)
+                 -------------------------------------------------------- -->
+            <article class="chapter-page" id="ch-family" data-page="3">
+              <div class="page-inner">
+                <header class="section-title-wrap center-text">
+                  <span class="section-tag-gold">BLESSINGS &amp; HERITAGE</span>
+                  <h3 class="section-heading-h3">Family &amp; Elders</h3>
+                </header>
+
+                <!-- DUAGEER (દુઆગીર) SECTION -->
+                <div class="duageer-card-section">
+                  <div class="duageer-badge-header">
+                    <span class="badge-gujarati">દુઆગીર</span>
+                    <span class="badge-english">DUAGEER (ELDERS’ BLESSINGS)</span>
+                  </div>
+
+                  <ul class="duageer-elders-list">
+                    <li>
+                      <span class="elder-crescent">🌙</span>
+                      <strong>Mr. Abdulhamid Ismail Sunasara (But)</strong>
+                    </li>
+                    <li>
+                      <span class="elder-crescent">🌙</span>
+                      <strong>Mr. Amin Ismail Sunasara (But)</strong>
+                    </li>
+                    <li>
+                      <span class="elder-crescent">🌙</span>
+                      <strong>Mr. Aslam Ismail Sunasara (But)</strong>
+                    </li>
+                  </ul>
+
+                  <div class="samast-parivar-note">
+                    <strong>&amp; Sunasara (But) Family</strong>
+                    <span class="parivar-gujarati">(તથા સમસ્ત સુણસરા [ભટ] પરિવાર)</span>
+                  </div>
                 </div>
 
-                <div class="rsvp-3d-slab">
-                  <div class="rsvp-flower-crest">✿ ❀ ✿</div>
-                  <h3 class="rsvp-headline">Will you grace us with your presence?</h3>
-                  <p class="rsvp-sub">Please confirm your attendance so we may arrange your warm hospitality.</p>
+                <!-- FULO KI FARMAISH (ફુલો કી ફરમાઇશ) SECTION -->
+                <div class="fulo-farmaish-card">
+                  <div class="farmaish-banner">
+                    <span class="kids-badge-guj">ફુલો કી ફરમાઇશ</span>
+                    <span class="kids-badge-en">LITTLE ONES’ SWEET INVITATION</span>
+                  </div>
 
-                  <div class="rsvp-actions-rack">
-                    <!-- WhatsApp Direct RSVP -->
-                    <a href="https://wa.me/?text=Assalamu%20Alaikum!%20Heartiest%20congratulations%20to%20Farman%20%26%20Asma%20on%20their%20wedding!%20InshaAllah%20we%20will%20be%20attending%20to%20share%20our%20duas%20and%20blessings." target="_blank" rel="noopener noreferrer" class="btn-whatsapp-3d">
+                  <div class="kids-poem-box">
+                    <div class="poem-quotation">“</div>
+                    <p class="poem-line">Chhote chhote paon hamare, dil mein dher saara pyaar,</p>
+                    <p class="poem-line">Mere Chacha / Mamu ki shaadi mein, rahega aapka intezaar!</p>
+                    <p class="poem-punchline">Jalul... Jalul... se aana haan! ❤️</p>
+                  </div>
+
+                  <div class="kids-names-deck">
+                    <span class="kid-pill">Inaya</span>
+                    <span class="kid-pill">Ammarhusain</span>
+                    <span class="kid-pill">Mohammad</span>
+                    <span class="kid-pill">Mahira</span>
+                    <span class="kid-pill">Mahir</span>
+                    <span class="kid-pill">Izhan</span>
+                    <span class="kid-pill">Amena</span>
+                  </div>
+                </div>
+
+                <div class="page-nav-buttons">
+                  <button class="gold-outline-btn" data-go="2">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    <span>Back</span>
+                  </button>
+                  <button class="gold-cta-btn" data-go="4">
+                    <span>Confirm RSVP &amp; Wishes</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </button>
+                </div>
+
+              </div>
+            </article>
+
+            <!-- --------------------------------------------------------
+                 CHAPTER 5: RSVP, DIRECT WHATSAPP & BLESSINGS COUNTER
+                 -------------------------------------------------------- -->
+            <article class="chapter-page" id="ch-rsvp" data-page="4">
+              <div class="page-inner center-text">
+                <header class="section-title-wrap">
+                  <span class="section-tag-gold">CONFIRM ATTENDANCE</span>
+                  <h3 class="section-heading-h3">RSVP &amp; Blessings</h3>
+                  <p class="section-sub-desc">Send your warmest prayers and wishes to Farman &amp; Asma</p>
+                </header>
+
+                <div class="rsvp-showcase-box">
+                  <div class="flower-symbol-crest">✿ ❀ ✿</div>
+                  <h4 class="rsvp-welcome-prompt">Will you honor us with your gracious company?</h4>
+                  <p class="rsvp-gentle-note">
+                    Your presence and prayers will bring utmost joy to both families.
+                  </p>
+
+                  <div class="rsvp-actions-container">
+                    <!-- Direct WhatsApp to +91 8128879306 -->
+                    <a href="https://wa.me/918128879306?text=Assalamu%20Alaikum!%20Heartiest%20congratulations%20to%20Farman%20%26%20Asma%20on%20their%20wedding!%20InshaAllah%20we%20will%20be%20attending%20the%20ceremonies%20at%20Basu%20to%20share%20our%20duas%20and%20blessings." target="_blank" rel="noopener noreferrer" class="whatsapp-gold-btn">
                       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.668-.699c.969.585 1.761.948 2.792.948h.005c3.18 0 5.767-2.587 5.768-5.766.001-3.182-2.585-5.768-5.768-5.768zm7.392 5.766c-.001 4.109-3.344 7.451-7.454 7.451-1.259 0-2.45-.316-3.499-.893l-4.47 1.171 1.194-4.357a7.44 7.44 0 0 1-1.077-3.872c0-4.108 3.344-7.451 7.453-7.451 4.11 0 7.453 3.343 7.453 7.451z"/></svg>
                       <span>Send Wishes on WhatsApp</span>
                     </a>
 
-                    <!-- Add to Google Calendar -->
-                    <button class="btn-calendar-3d" id="add-calendar-action">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                      <span>Add Nikah to Google Calendar</span>
-                    </button>
+                    <!-- Direct Call Button -->
+                    <a href="tel:+918128879306" class="phone-gold-btn">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                      <span>Call: +91 81288 79306</span>
+                    </a>
 
-                    <!-- Interactive 3D Rose Petal Cannon -->
-                    <button class="btn-petals-cannon" id="shower-petals-btn">
-                      <span>🌸 Shower Rose Petals &amp; Duas 🌸</span>
+                    <!-- Interactive Shower Blessings Tap Counter -->
+                    <button class="blessings-counter-btn" id="blessing-shower-btn">
+                      <span class="btn-flower-ico">🌸</span>
+                      <span>Shower Blessings &amp; Duas</span>
+                      <span class="tap-counter-badge" id="tap-counter-val">128 Showered</span>
                     </button>
-                  </div>
-
-                  <div class="host-contact-pod">
-                    <span class="contact-lbl">For travel or accommodation inquiries:</span>
-                    <a href="tel:+919876543210" class="contact-val">+91 98765 43210</a>
                   </div>
                 </div>
 
-                <div class="closing-signoff">
-                  <div class="arabic-closing">جَزَاكُمُ ٱللَّٰهُ خَيْرًا</div>
-                  <p class="closing-eng">“May Allah reward you with boundless goodness.”</p>
-                  <div class="signature-names">Farman &amp; Asma</div>
+                <!-- Closing Sacred Blessing -->
+                <div class="closing-proclamation">
+                  <div class="jazakallah-ar">جَزَاكُمُ ٱللَّٰهُ خَيْرًا</div>
+                  <p class="jazakallah-en">“We look forward to celebrating with you!”</p>
+                  <div class="final-couple-names">Farman &amp; Asma</div>
+                  <p class="native-footer-cite">Basu, Ta. Vadgam, Gujarat — 2026</p>
                 </div>
 
-                <div class="step-nav-row center">
-                  <button class="btn-3d-secondary" data-nav="0">
-                    <span>Return to First Chapter</span>
+                <div class="page-nav-buttons center-align">
+                  <button class="gold-outline-btn" data-go="0">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    <span>Back to First Chapter</span>
                   </button>
                 </div>
+
               </div>
-            </section>
+            </article>
 
           </div>
         </div>
 
         <!-- Desktop Navigation Floating Arrows -->
-        <button class="stage-arrow arrow-prev" id="prev-arrow" aria-label="Previous Page">‹</button>
-        <button class="stage-arrow arrow-next" id="next-arrow" aria-label="Next Page">›</button>
+        <button class="deck-arrow arrow-left" id="deck-prev-arrow" aria-label="Previous Page">‹</button>
+        <button class="deck-arrow arrow-right" id="deck-next-arrow" aria-label="Next Page">›</button>
 
       </div>
-    </main>
+    </section>
 
-  </div>
+  </main>
 
   <!-- Interactive Toast Notification -->
-  <div class="hud-toast" id="hud-toast" role="status" aria-live="polite"></div>
+  <div class="luxury-toast" id="luxury-toast" role="status" aria-live="polite"></div>
 
   <!-- Audio Element for Traditional Wedding Soundtrack -->
-  <audio id="wedding-audio" loop preload="auto">
+  <audio id="wedding-soundtrack" loop preload="auto">
     <source src="https://cdn.pixabay.com/download/audio/2022/05/16/audio_c89fca6cb9.mp3?filename=indian-flute-ambient-111164.mp3" type="audio/mp3">
   </audio>
 
